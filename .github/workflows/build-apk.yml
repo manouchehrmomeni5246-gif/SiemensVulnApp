@@ -1,0 +1,40 @@
+name: Build APK from ZIP
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.7
+
+      - name: Unzip project
+        run: |
+          unzip -q app/SiemensVulnApp.zip -d extracted
+
+      - name: Build APK
+        run: |
+          cd extracted/SiemensVulnApp
+          gradle assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SiemensVulnApp-debug-apk
+          path: extracted/SiemensVulnApp/app/build/outputs/apk/debug/app-debug.apk
