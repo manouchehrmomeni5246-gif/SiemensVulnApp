@@ -60,6 +60,11 @@ jobs:
           }
           EOF
 
+      - name: Fix Kotlin singleLine
+        run: |
+          cd extracted/SiemensVulnApp
+          find . -name MainActivity.kt -exec sed -i 's/singleLine = true/maxLines = 1/g' {} \;
+
       - name: Build APK
         run: |
           cd extracted/SiemensVulnApp
